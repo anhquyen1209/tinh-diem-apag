@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Công cụ Tính điểm xét học bạ - APAG</title>
+  <style>
+    :root {
+      --apag-red: #E03A3E;
+      --apag-blue-dark: #1A2D6C;
+      --apag-blue-light: #0984e3;
+      --apag-highlight: #ffeaa7;
+    }
+
+    body {
+      font-family: "Segoe UI", sans-serif;
+      padding: 20px;
+      background: linear-gradient(to bottom right, #f9fafb, #fdfdfd);
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 120px;
+      height: 120px;
+      background-image: url('https://i.imgur.com/ZVh0PBP.png'); /* Thay bằng logo APAG nếu có */
+      background-size: contain;
+      background-repeat: no-repeat;
+      opacity: 0.07;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .header {
+      background: linear-gradient(to right, #1A2D6C, #E03A3E);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .header-logo {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .header-logo img {
+      max-height: 60px;
+    }
+    .header h2,
+    .header p,
+    .header a {
+      color: white;
+    }
+    .container {
+      display: flex;
+      gap: 20px;
+    }
+    .left {
+      flex: 1;
+      max-width: 33%;
+      background-color: #ffffff;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .right {
+      flex: 2;
+      background-color: #ffffff;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+  background-color: var(--apag-blue-light);
+  color: #fff;
+  font-weight: bold;
+    }
+    h3 {
+  color: var(--apag-blue-dark);
+  margin-bottom: 10px;
+    }
+.form-group {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.form-group label {
+  width: 160px;
+  font-weight: bold;
+}
+.form-group input, .form-group select {
+  flex: 1;
+  padding: 6px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+    .highlight {
+      background-color: var(--apag-highlight);
+      font-weight: bold;
+    }
+    #topResult {
+      font-weight: bold;
+      color: var(--apag-blue-light);
+      margin-top: 10px;
+      font-size: 16px;
+    }
+    #canhbao {
+      background-color: #fff3cd;
+      color: #856404;
+      border-left: 4px solid var(--apag-red);
+      border: 1px solid #ffeeba;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .canhbao-item {
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+    }
+    .canhbao-item i {
+      margin-right: 6px;
+      color: #e67e22;
+    }
+    input[type="submit"], button {
+      background-color: var(--apag-blue-dark);
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    input[type="submit"]:hover, button:hover {
+      background-color: var(--apag-blue-light);
+    }
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    input[type="number"] {
+      -moz-appearance: textfield;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h2>🎓 Công cụ Tính điểm xét học bạ THPT</h2>
+    <p><strong>HỌC VIỆN HÀNH CHÍNH VÀ QUẢN TRỊ CÔNG (APAG)</strong></p>
+    <p>📞 Hotline: 1900.099.996 | 🌐 Website: <a href="https://apag.edu.vn" target="_blank">apag.edu.vn</a></p>
+    <p>🔹 Facebook: <a href="https://fb.com/tuyensinhapag" target="_blank">fb.com/tuyensinhapag</a> 🎵 TikTok: @tuyensinhapag | 📸 Instagram: @tuyensinhapag</p>
+  </div>
+  <div class="container">
+    <div class="left">
+      <form id="scoreForm">
+        <h3>Nhập điểm các môn</h3>
+        <div id="canhbao" style="display:none;"></div>
+        <label>Họ và tên thí sinh: <input name="hoten" id="hoten" required></label><br><br>
+        <label>Ngành/Chuyên ngành đăng ký:
+          <select name="manganh" id="manganh" required>
+            <option value="" disabled selected>-- Chọn ngành/chuyên ngành --</option>
+             <!-- Hà Nội -->
+             <option value="" disabled selected>-- Tại Hà Nội --</option>
+            <option value="7340404-Hà Nội">Ngành Quản trị nhân lực tại Hà Nội</option>
+            <option value="7340406-Hà Nội">Ngành Quản trị văn phòng và chuyên ngành tại Hà Nội</option>
+            <option value="7380101-Hà Nội">Ngành Luật và chuyên ngành tại Hà Nội</option>
+            <option value="7310101-Hà Nội">Ngành Kinh tế và chuyên ngành tại Hà Nội</option>
+            <option value="7310205-Hà Nội">Ngành Quản lý nhà nước tại Hà Nội</option>
+            <option value="7310201-Hà Nội">Ngành Chính trị học và chuyên ngành tại Hà Nội</option>
+            <option value="7310202-Hà Nội">Ngành Xây dựng Đảng và chính quyền nhà nước tại Hà Nội</option>
+            <option value="7320303-Hà Nội">Ngành Lưu trữ học và chuyên ngành tại Hà Nội</option>
+            <option value="7320201-Hà Nội">Ngành Thông tin – thư viện và chuyên ngành tại Hà Nội</option>
+            <option value="7810103-Hà Nội">Ngành Quản trị dịch vụ du lịch và lữ hành tại Hà Nội</option>
+            <option value="7229042-Hà Nội">Ngành Quản lý văn hóa và chuyên ngành tại Hà Nội</option>
+            <option value="7229040-01-Hà Nội">Chuyên ngành Văn hóa Du lịch tại Hà Nội</option>
+            <option value="7229040-02-Hà Nội">Chuyên ngành Văn hóa Truyền thông tại Hà Nội</option>
+            <option value="7220201-Hà Nội">Ngành Ngôn ngữ Anh tại Hà Nội</option>
+            <option value="7480104-Hà Nội">Ngành Hệ thống thông tin và chuyên ngành tại Hà Nội</option>
+
+            <!-- Quảng Nam -->
+            <option value="" disabled selected>-- Tại Quảng Nam --</option>
+            <option value="7340404-Quảng Nam">Ngành Quản trị nhân lực tại Quảng Nam</option>
+            <option value="7340406-Quảng Nam">Ngành Quản trị văn phòng tại Quảng Nam</option>
+            <option value="7380101-Quảng Nam">Ngành Luật và chuyên ngành tại Quảng Nam</option>
+            <option value="7310205-Quảng Nam">Ngành Quản lý nhà nước tại Quảng Nam</option>
+            <option value="7810103-Quảng Nam">Ngành Quản trị dịch vụ du lịch và lữ hành tại Quảng Nam</option>
+            <option value="7310101-Quảng Nam">Ngành Kinh tế tại Quảng Nam</option>
+
+            <!-- TP. HCM -->
+            <option value="" disabled selected>-- Tại TP. Hồ Chí Minh --</option>
+            <option value="7380101-TP-HCM">Ngành Luật và chuyên ngành tại TP. HCM</option>
+            <option value="7340404-TP-HCM">Ngành Quản trị nhân lực tại TP. HCM</option>
+            <option value="7340406-TP-HCM">Ngành Quản trị văn phòng tại TP. HCM</option>
+            <option value="7310205-TP-HCM">Ngành Quản lý nhà nước tại TP. HCM</option>
+            <option value="7310202-TP-HCM">Ngành Xây dựng Đảng và chính quyền nhà nước tại TP. HCM</option>
+            <option value="7320303-TP-HCM">Ngành Lưu trữ học và chuyên ngành tại TP. HCM</option>
+            <option value="7310101-TP-HCM">Ngành Kinh tế tại TP. HCM</option>
+
+            <!-- Đắk Lắk -->
+            <option value="" disabled selected>-- Tại Đắk Lắk --</option>
+            <option value="7310205-Đắk Lắk">Ngành Quản lý nhà nước tại Đắk Lắk</option>
+            <option value="7340404-Đắk Lắk">Ngành Quản trị nhân lực tại Đắk Lắk</option>
+            <option value="7380101-Đắk Lắk">Ngành Luật tại Đắk Lắk</option>
+          </select>
+        </label>
+        <div id="topResult"></div>
+        <table id="scoreTable">
+          <tr>
+            <th>Môn</th>
+            <th>Trung bình Lớp 10</th>
+            <th>Trung bình Lớp 11</th>
+            <th>Trung bình Lớp 12</th>
+            <th>TBM</th>
+          </tr>
+        </table>
+        <br>
+        <input type="submit" value="Tính điểm">
+        <button type="button" onclick="clearForm()">Xóa dữ liệu</button>
+      </form>
+    </div>
+
+    <div class="right">
+      <h3>Kết quả tổ hợp</h3>
+      <div id="result"></div>
+    </div>
+  </div>
+
+  <script>
+    const subjects = ["toan", "ly", "hoa", "van", "su", "dia", "anh", "tin", "gdk"];
+
+window.onload = function () {
+  // Ép dropdown ngành về mặc định mỗi khi load trang
+  document.getElementById("manganh").selectedIndex = 0;
+
+  const table = document.getElementById("scoreTable");
+  subjects.forEach(mon => {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${mon.toUpperCase()}</td>
+      <td><input name="${mon}10" type="number" min="0" max="10" step="0.01" style="text-align: center;" oninput="toggleNext(this, '${mon}')"></td>
+      <td><input name="${mon}11" type="number" min="0" max="10" step="0.01" style="text-align: center;" disabled oninput="updateAverage('${mon}')"></td>
+      <td><input name="${mon}12" type="number" min="0" max="10" step="0.01" style="text-align: center;" disabled oninput="updateAverage('${mon}')"></td>
+      <td id="${mon}avg" style="text-align: center; font-weight: bold;">—</td>
+    `;
+    table.appendChild(row);
+  });
+};
+
+
+    function toggleNext(el, mon) {
+      const val = el.value.trim();
+      const disable = (val === "");
+      const el11 = document.querySelector(`input[name="${mon}11"]`);
+      const el12 = document.querySelector(`input[name="${mon}12"]`);
+      el11.disabled = disable;
+      el12.disabled = disable;
+      updateAverage(mon);
+    }
+
+function updateAverage(mon) {
+  const d10El = document.querySelector(`input[name="${mon}10"]`);
+  const d11El = document.querySelector(`input[name="${mon}11"]`);
+  const d12El = document.querySelector(`input[name="${mon}12"]`);
+
+  const d10 = parseFloat(d10El.value);
+  const d11 = parseFloat(d11El.value);
+  const d12 = parseFloat(d12El.value);
+  const avgCell = document.getElementById(`${mon}avg`);
+
+  const inputs = [
+    { el: d10El, val: d10, label: "Lớp 10" },
+    { el: d11El, val: d11, label: "Lớp 11" },
+    { el: d12El, val: d12, label: "Lớp 12" }
+  ];
+
+  // Kiểm tra nếu đã nhập thì không được < 1
+  inputs.forEach(({ el, val, label }) => {
+    if (!isNaN(val) && val < 1) {
+      el.style.border = "2px solid red";
+      el.title = `⚠️ Điểm ${mon.toUpperCase()} ${label} quá thấp (dưới 1 điểm)!`;
+    } else {
+      el.style.border = "";
+      el.title = "";
+    }
+  });
+
+  if (!isNaN(d10) && !isNaN(d11) && !isNaN(d12)) {
+    const avg = ((d10 + d11 + d12) / 3).toFixed(2);
+    avgCell.textContent = avg;
+
+    if (avg > 10) {
+      avgCell.style.color = "red";
+      avgCell.title = "⚠️ TBM không thể lớn hơn 10!";
+    } else {
+      avgCell.style.color = "";
+      avgCell.title = "";
+    }
+  } else {
+    avgCell.textContent = "—";
+    avgCell.style.color = "";
+    avgCell.title = "";
+  }
+}
+
+
+
+    function clearForm() {
+      document.getElementById("scoreForm").reset();
+      subjects.forEach(mon => {
+        document.querySelector(`input[name="${mon}11"]`).disabled = true;
+        document.querySelector(`input[name="${mon}12"]`).disabled = true;
+        document.getElementById(`${mon}avg`).textContent = "—";
+      });
+      document.getElementById("result").innerHTML = "";
+      document.getElementById("topResult").innerText = "";
+      document.getElementById("manganh").selectedIndex = 0;
+      document.getElementById("canhbao").style.display = "none";
+      document.getElementById("canhbao").innerHTML = "";
+    }
+
+    document.getElementById("scoreForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const form = new FormData(e.target);
+      const data = Object.fromEntries(form.entries());
+      const warnings = [];
+
+      for (let mon of subjects) {
+        const d10 = form.get(`${mon}10`);
+        const d11 = form.get(`${mon}11`);
+        const d12 = form.get(`${mon}12`);
+        if (d10 && (!d11 || !d12)) {
+          warnings.push(`<div class='canhbao-item'><i>⚠️</i> Môn ${mon.toUpperCase()}: Đã nhập lớp 10 nhưng chưa nhập lớp 11 hoặc 12.</div>`);
+        }
+      }
+
+      const canhbao = document.getElementById("canhbao");
+      if (warnings.length > 0) {
+        canhbao.innerHTML = warnings.join("");
+        canhbao.style.display = "block";
+        canhbao.scrollIntoView({ behavior: 'smooth' });
+        return;
+      } else {
+        canhbao.innerHTML = "";
+        canhbao.style.display = "none";
+      }
+
+      google.script.run.withSuccessHandler(function(res) {
+        document.getElementById("result").innerHTML = res.html;
+        document.getElementById("topResult").innerText = `🏆 Tổ hợp cao nhất: ${res.top} – ${res.score} điểm`;
+      }).tinhTatCaToHop(data);
+    });
+  </script>
+  <div style="text-align: center; font-size: 13px; color: #666; margin-top: 40px;">
+  Thiết kế bởi <strong>Nguyễn Anh Quyền</strong> – Chuyên viên Ban Quản lý đào tạo
+</div>
+
+</body>
+</html>
