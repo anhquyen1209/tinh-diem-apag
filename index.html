@@ -361,10 +361,27 @@ function updateAverage(mon) {
         canhbao.style.display = "none";
       }
 
-      google.script.run.withSuccessHandler(function(res) {
-        document.getElementById("result").innerHTML = res.html;
-        document.getElementById("topResult").innerText = `🏆 Tổ hợp cao nhất: ${res.top} – ${res.score} điểm`;
-      }).tinhTatCaToHop(data);
+fetch('https://script.google.com/macros/s/AKfycbyEvvUsO1JGdxR3QYsRhT7rHLKfMbtzg_dWvkzfupGvePIx-alU7rs6NedYEjSDo9Br7g/exec', {
+  method: 'POST',
+  body: JSON.stringify(data),
+  headers: {
+    'Content-Type': 'application/json'
+  }
+})
+.then(response => response.json())
+.then(res => {
+  if (res.error) {
+    alert("Lỗi từ máy chủ: " + res.error);
+    return;
+  }
+  document.getElementById("result").innerHTML = res.html;
+  document.getElementById("topResult").innerText = `🏆 Tổ hợp cao nhất: ${res.top} – ${res.score} điểm`;
+})
+.catch(error => {
+  console.error('Lỗi:', error);
+  alert('Đã có lỗi xảy ra khi gửi dữ liệu.');
+});
+
     });
   </script>
   <div style="text-align: center; font-size: 13px; color: #666; margin-top: 40px;">
